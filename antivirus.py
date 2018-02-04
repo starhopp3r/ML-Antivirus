@@ -1,4 +1,3 @@
-#! /usr/bin/python2
 import pefile
 import os
 import array
@@ -10,6 +9,7 @@ import argparse
 
 
 def get_entropy(data):
+    """Get entropy of file"""
     if len(data) == 0:
         return 0.0
     occurences = array.array('L', [0] * 256)
@@ -26,10 +26,7 @@ def get_entropy(data):
 
 
 def get_resources(pe):
-    """
-    Extract resources :
-    [entropy, size]
-    """
+    """Extract resources: [entropy, size]"""
     resources = []
     if hasattr(pe, 'DIRECTORY_ENTRY_RESOURCE'):
         try:
@@ -44,13 +41,13 @@ def get_resources(pe):
                                 entropy = get_entropy(data)
 
                                 resources.append([entropy, size])
-        except Exception as e:
+        except Exception:
             return resources
     return resources
 
 
 def get_version_info(pe):
-    """Return version infos"""
+    """Return version information"""
     res = {}
     for fileinfo in pe.FileInfo:
         if fileinfo.Key == 'StringFileInfo':
@@ -72,6 +69,7 @@ def get_version_info(pe):
 
 
 def extract_infos(fpath):
+    """Extract information about file"""
     res = {}
     pe = pefile.PE(fpath)
     res['Machine'] = pe.FILE_HEADER.Machine
